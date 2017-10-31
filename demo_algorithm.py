@@ -4,11 +4,11 @@ import cv2
 import matplotlib
 import matplotlib.pyplot as plt
 from compPhaseBatch import compPhaseBatch
-from skimage import color
+# from skimage import color
 # import pdb
 import re
 
-def key_frame(data_dir, mFrame, top_k):
+def key_frame(data_dir, mFrame, top_k, show_img=False):
 	reScale=[120,160]
 	imgDir = os.listdir(data_dir)
 	# imgDir = sorted(img_list, key=lambda k: map(int, os.path.splitext(k)[0]), reverse=True)
@@ -17,7 +17,6 @@ def key_frame(data_dir, mFrame, top_k):
 	nFrame = len(imgDir)
 	# print imgDir[:5]
 	                       
-
 	batch = np.zeros((reScale[0],reScale[1],mFrame))
 	for i in range(mFrame):
 		# img = cv2.imread(imgDir[i])
@@ -39,18 +38,20 @@ def key_frame(data_dir, mFrame, top_k):
 		m_norm = np.linalg.norm(motionMap)
 		mmnorm.append(m_norm)
 
-		# plt.figure(1)
-		# plt.imshow(curFrame)
-		# plt.show(block=False)
-		# plt.pause(.001)
+		if (show_img==True):
+			plt.figure(1)
+			plt.imshow(curFrame)
+			plt.show(block=False)
+			plt.pause(.001)
+			plt.figure(2)
+			plt.imshow(motionMap, cmap='gray')
+			plt.show(block=False)
+			plt.pause(.001)
 
-		# plt.figure(2)
-		# plt.imshow(motionMap, cmap='gray')
-		# plt.show(block=False)
-		# plt.pause(.001)
-	# x=range(len(mmnorm))
-	# plt.scatter(x,mmnorm)
-	# plt.show()
+	if (show_img==True):
+		x=range(len(mmnorm))
+		plt.scatter(x,mmnorm)
+		plt.show()
 
 	top_idx = sorted(range(len(mmnorm)), key=lambda k: mmnorm[k], reverse=True)
 	sorted_top_idx = sorted(top_idx[:top_k])
@@ -59,19 +60,13 @@ def key_frame(data_dir, mFrame, top_k):
 		select_frames.append(imgDir[sorted_top_idx[i]+mFrame/2])
 	return select_frames
 
-# dataPath='d/home-4/ytian27@jhu.edu/scratch/yetian/C3D-TCN-Keras/frames'
-# key_frames_dir = 'd/home-4/ytian27@jhu.edu/scratch/yetian/C3D-TCN-Keras/key_frames'
-# # dataPath = 'train-ids_8/4-2FNtn7m28[ 37 621  47 145  23  29 101]'
-# mFrame=5
-# top_k = 16
-# folder_list = [f for f in os.listdir(dataPath)]
-# n=0
-# for video_id, videdo_dir in enumerate(folder_list):
-# 	n +=1
-# 	if os.path.isfile(os.path.join(key_frames_dir, videdo_dir))==False:
-# 		os.mkdir(os.path.join(key_frames_dir, videdo_dir))
+if __name__ == '__main__':
 
-# 	select_frames = key_frame(data_dir, mFrame, top_k)
+	data_dir='/home/ye/Works/C3D-TCN-Keras/frames/v_ApplyEyeMakeup_g01_c02' # change your image dir here
+	mFrame=5
+	top_k = 16
+
+	select_frames = key_frame(data_dir, mFrame, top_k, show_img=True)
 
 
 
